@@ -1,0 +1,24 @@
+GET http://localhost:3000/daily-tracker
+
+###
+
+POST http://localhost:3000/daily-tracker
+Content-Type: application/json
+
+{
+  "titel": "Push Ups",
+  "goal": 20
+}
+
+###
+
+DELETE http://localhost:3000/daily-tracker/8
+
+###
+
+PATCH http://localhost:3000/daily-tracker/3
+Content-Type: application/json
+
+{
+  "achieved": 25
+}
