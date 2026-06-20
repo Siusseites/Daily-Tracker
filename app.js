@@ -57,6 +57,8 @@ async function ladeZiele() {
     await fetch(`${API_URL}/daily-tracker/${id}/${userId}`, {
       method: 'DELETE',
     })
+
+    ladeZiele()
   })
   })
 
