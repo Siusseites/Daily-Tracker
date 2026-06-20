@@ -3,13 +3,19 @@ const addButton = document.querySelector('.js-add-btn')
 const titelInput = document.getElementById('titel')
 const goalInput = document.getElementById('goal')
 
+const userId = localStorage.getItem('userId')
+const username = localStorage.getItem('username')
+
+console.log(userId)
+console.log(username)
+
 import dayjs from 'https://cdn.jsdelivr.net/npm/dayjs@1/+esm'
 
 const today = dayjs()
 console.log(today)
 
 async function ladeZiele() {
-  const antwort = await fetch('http://localhost:3000/daily-tracker')
+  const antwort = await fetch(`http://localhost:3000/daily-tracker/${userId}`)
 
   const ziele = await antwort.json()
   console.log(ziele)
@@ -46,7 +52,7 @@ async function ladeZiele() {
     console.log(target)
 
     const id = target.dataset.id
-    await fetch(`http://localhost:3000/daily-tracker/${id}`, {
+    await fetch(`http://localhost:3000/daily-tracker/${id}/${userId}`, {
       method: 'DELETE',
     })
   })
@@ -73,7 +79,7 @@ async function ladeZiele() {
       console.log('id:', id)
       console.log('target dataset:', target.dataset)
 
-      await fetch(`http://localhost:3000/daily-tracker/${id}`, {
+      await fetch(`http://localhost:3000/daily-tracker/${id}/${userId}`, {
       method: 'PATCH',
       headers: {
       'Content-Type': 'application/json'
@@ -101,7 +107,7 @@ addButton.addEventListener('click', async () => {
 
   if(titel == '' || goal == ''){return}
 
-  await fetch('http://localhost:3000/daily-tracker', {
+  await fetch(`http://localhost:3000/daily-tracker/${userId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

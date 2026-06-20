@@ -1,13 +1,14 @@
-GET http://localhost:3000/daily-tracker
+GET http://localhost:3000/daily-tracker/12
 
 ###
 
-POST http://localhost:3000/daily-tracker
+POST http://localhost:3000/daily-tracker/1
 Content-Type: application/json
 
 {
-  "titel": "Push Ups",
-  "goal": 20
+  "titel": "Pull Ups",
+  "goal": 20,
+  "date": "30.05.2026"
 }
 
 ###
@@ -21,4 +22,24 @@ Content-Type: application/json
 
 {
   "achieved": 25
+}
+
+###
+
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "name": "Felix",
+  "password": "1234"
+}
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "name": "Felix",
+  "password": "H35"
 }

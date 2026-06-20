@@ -1,0 +1,107 @@
+const loginNameInput = document.getElementById('login-name')
+const loginPasswordInput = document.getElementById('login-password')
+const loginForm = document.getElementById('login-form')
+
+const registerNameInput = document.getElementById('register-name')
+const registerPasswordInput = document.getElementById('register-password')
+const registerForm = document.getElementById('register-form')
+
+const loginBtn = document.getElementById('login-btn')
+const registerBtn = document.getElementById('register-btn')
+
+const showRegister = document.getElementById('show-register')
+const showLogin = document.getElementById('show-login')
+
+const loginError = document.getElementById('login-error')
+const registerError = document.getElementById('register-error')
+
+const loginTogglePassword = document.querySelector('.login-toggle-password')
+
+const registerTogglePassword = document.querySelector('.register-toggle-password')
+
+loginBtn.addEventListener('click', async () => {
+  const name = loginNameInput.value.trim()
+  const password = loginPasswordInput.value.trim()
+
+  const res = await fetch('http://localhost:3000/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name, password})
+  })
+
+  const daten =  await res.json()
+
+  if(res.ok){
+    localStorage.setItem('userId', daten.userId)
+    localStorage.setItem('username', name)
+
+    loginNameInput.value = ''
+    loginPasswordInput.value = ''
+    window.location.href = 'index.html'
+  } else{
+    loginError.innerHTML = daten.error
+  }
+  
+})
+
+registerBtn.addEventListener('click', async () => {
+  const name = registerNameInput.value.trim()
+  const password = registerPasswordInput.value.trim()
+
+  const res = await fetch('http://localhost:3000/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name, password})
+  })
+
+  const daten = await res.json()
+
+  if(res.ok){
+    registerNameInput.value = ''
+    registerPasswordInput.value = ''
+
+    loginForm.classList.remove('hidden')
+    registerForm.classList.add('hidden')
+    
+  } else{
+    registerError.innerHTML = daten.error
+  }
+})
+
+showRegister.addEventListener('click', () => {
+  loginForm.classList.add('hidden')
+  registerForm.classList.remove('hidden')
+})
+
+showLogin.addEventListener('click', () => {
+  loginForm.classList.remove('hidden')
+  registerForm.classList.add('hidden')
+})
+
+loginTogglePassword.addEventListener('click', () => {
+  if(loginTogglePassword.classList.contains('hidden')){
+    loginPasswordInput.type = 'text'
+    loginTogglePassword.src = 'icons8-hide-30.png'
+    loginTogglePassword.classList.remove('hidden')
+  } else{
+    loginPasswordInput.type = 'password'
+    loginTogglePassword.src = 'icons8-eye-30.png'
+    loginTogglePassword.classList.add('hidden')
+  }
+})
+
+registerTogglePassword.addEventListener('click', () => {
+  if(registerTogglePassword.classList.contains('hidden')){
+    registerPasswordInput.type = 'text'
+    registerTogglePassword.src = 'icons8-hide-30.png'
+    registerTogglePassword.classList.remove('hidden')
+  } else{
+    registerPasswordInput.type = 'password'
+    registerTogglePassword.src = 'icons8-eye-30.png'
+    registerTogglePassword.classList.add('hidden')
+  }
+})
