@@ -1,26 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Goal Tracker</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Daily Login</title>
+  <link rel="stylesheet" href="start.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>Daily<span>.</span></h1>
-    <p>Track your goals — one rep at a time</p>
-  </header>
+  <div class="auth-view" id="auth-view">
+    <header>
+      <h1>Daily<span>.</span></h1>
+      <p>Small steps big changes</p>
+    </header>
 
-  <div class="add-form">
-    <input type="text" id="titel" placeholder="New goal...">
-    <input type="number" id="goal" placeholder="0">
-    <button class="js-add-btn">+</button>
+    <div id="login-form" class="auth-form">
+      <div class="">
+        <label for="login-name">Name</label>
+        <input type="text" id="login-name" placeholder="Enter your name" class="auth-input">
+      </div>
+      <div class="">
+        <label for="login-password">Password</label>
+        <div class="password-container">
+          <input type="password" id="login-password" placeholder="Enter your password" class="auth-input">
+          <button><img class="login-toggle-password hidden" src="icons8-eye-30.png" alt=""></button>
+        </div>
+      </div>
+      <button id="login-btn" class="auth-btn">Login</button>
+      <p class="auth-switch">
+        No account? <span id="show-register" class="switch-link">Register</span>
+      </p>
+      <p id="login-error" class="error-message"></p>
+    </div>
+
+    <div id="register-form" class="auth-form hidden">
+      <div class="">
+        <label for="register-name">Username</label>
+        <input type="text" id="register-name" placeholder="Username" class="auth-input">
+      </div>
+      <div class="">
+        <label for="register-password">Password</label>
+        <div class="password-container">
+          <input type="password" id="register-password" placeholder="Password (min. 4 chars)" class="auth-input">
+          <button><img class="register-toggle-password hidden" src="icons8-eye-30.png" alt=""></button>
+        </div>
+      </div>
+      <button id="register-btn" class="auth-btn">Register</button>
+      <p class="auth-switch">
+        Already have an account? <span id="show-login" class="switch-link">Login</span>
+      </p>
+      <p id="register-error" class="error-message"></p>
+    </div>
   </div>
 
-  <p class="section-label">Your goals</p>
-  <ul></ul>
-
-  <script type="module" src="app.js"></script>
+  <script type="module" src="register.js"></script>
 </body>
 </html>

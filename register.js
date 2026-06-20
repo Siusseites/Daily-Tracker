@@ -41,7 +41,7 @@ loginBtn.addEventListener('click', async () => {
 
     loginNameInput.value = ''
     loginPasswordInput.value = ''
-    window.location.href = 'index.html'
+    window.location.href = 'tracker.html'
   } else{
     loginError.innerHTML = daten.error
   }
