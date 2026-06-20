@@ -18,36 +18,36 @@ const db = new Pool({
 
 // const db = new Database('ziele.db')
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS ziele(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  titel TEXT,
-  goal INTEGER,
-  achieved INTEGER DEFAULT 0,
-  done INTEGER DEFAULT 0,
-  date TEXT,
-  userId INTEGER
-  )
-  `)
+// db.exec(`
+//   CREATE TABLE IF NOT EXISTS ziele(
+//   id INTEGER PRIMARY KEY AUTOINCREMENT,
+//   titel TEXT,
+//   goal INTEGER,
+//   achieved INTEGER DEFAULT 0,
+//   done INTEGER DEFAULT 0,
+//   date TEXT,
+//   userId INTEGER
+//   )
+//   `)
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users(
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  password TEXT
-  )
-  `)
+// db.exec(`
+//   CREATE TABLE IF NOT EXISTS users(
+//   id INTEGER PRIMARY KEY AUTOINCREMENT,
+//   name TEXT,
+//   password TEXT
+//   )
+//   `)
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS history(
-  userId INTEGER,
-  titel TEXT,
-  goal INTEGER,
-  achieved INTEGER DEFAULT 0,
-  done INTEGER DEFAULT 0,
-  date TEXT
-  )
- `)
+// db.exec(`
+//   CREATE TABLE IF NOT EXISTS history(
+//   userId INTEGER,
+//   titel TEXT,
+//   goal INTEGER,
+//   achieved INTEGER DEFAULT 0,
+//   done INTEGER DEFAULT 0,
+//   date TEXT
+//   )
+//  `)
 
 const app = express()
 const PORT = 3000
