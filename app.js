@@ -109,6 +109,9 @@ addButton.addEventListener('click', async () => {
 
   if(titel == '' || goal == ''){return}
 
+  titelInput.value = ''
+  goalInput.value = ''
+
   await fetch(`${API_URL}/daily-tracker/${userId}`, {
     method: 'POST',
     headers: {
@@ -117,8 +120,6 @@ addButton.addEventListener('click', async () => {
     body: JSON.stringify({titel, goal})
   })
 
-  titelInput.value = ''
-  goalInput.value = ''
   ladeZiele()
 })
 
