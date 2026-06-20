@@ -167,7 +167,7 @@ app.post('/login',async (req,res) => {
   return res.status(401).json({ error: 'User not found' })
 }
 
-  if(await bcrypt.compare(password, user.password)){
+  if(await bcrypt.compare(password, user.passwort)){
     res.json({userId: user.id})
   } else{return res.status(401).json({ error: 'Wrong password' })}
 })
