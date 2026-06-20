@@ -16,7 +16,7 @@ const db = new Pool({
   ssl: true
 })
 
-const db = new Database('ziele.db')
+// const db = new Database('ziele.db')
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS ziele(
