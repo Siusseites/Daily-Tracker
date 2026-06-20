@@ -54,11 +54,22 @@ async function ladeZiele() {
     console.log(target)
 
     const id = target.dataset.id
-    await fetch(`${API_URL}/daily-tracker/${id}/${userId}`, {
+    try{
+      const response = await fetch(`${API_URL}/daily-tracker/${id}/${userId}`, {
       method: 'DELETE',
     })
 
-    ladeZiele()
+    if (response.ok) {
+        console.log('Erfolgreich gelöscht')
+      } else {
+        console.error('Server konnte nicht löschen:', response.status)}
+      
+        ladeZiele()
+    }
+    
+    catch (error){
+      console.error('Netzwerkfehler beim Löschen:', error)
+    }
   })
   })
 
