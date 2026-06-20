@@ -117,9 +117,9 @@ addButton.addEventListener('click', async () => {
     body: JSON.stringify({titel, goal})
   })
 
-  ladeZiele()
   titelInput.value = ''
   goalInput.value = ''
+  ladeZiele()
 })
 
 ladeZiele()
