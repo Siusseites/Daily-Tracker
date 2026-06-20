@@ -9,13 +9,15 @@ const username = localStorage.getItem('username')
 console.log(userId)
 console.log(username)
 
+const API_URL = ' https://daily-tracker-exl8.onrender.com'
+
 import dayjs from 'https://cdn.jsdelivr.net/npm/dayjs@1/+esm'
 
 const today = dayjs()
 console.log(today)
 
 async function ladeZiele() {
-  const antwort = await fetch(`http://localhost:3000/daily-tracker/${userId}`)
+  const antwort = await fetch(`${API_URL}/daily-tracker/${userId}`)
 
   const ziele = await antwort.json()
   console.log(ziele)
@@ -52,7 +54,7 @@ async function ladeZiele() {
     console.log(target)
 
     const id = target.dataset.id
-    await fetch(`http://localhost:3000/daily-tracker/${id}/${userId}`, {
+    await fetch(`${API_URL}/daily-tracker/${id}/${userId}`, {
       method: 'DELETE',
     })
   })
@@ -79,7 +81,7 @@ async function ladeZiele() {
       console.log('id:', id)
       console.log('target dataset:', target.dataset)
 
-      await fetch(`http://localhost:3000/daily-tracker/${id}/${userId}`, {
+      await fetch(`${API_URL}/daily-tracker/${id}/${userId}`, {
       method: 'PATCH',
       headers: {
       'Content-Type': 'application/json'
@@ -107,7 +109,7 @@ addButton.addEventListener('click', async () => {
 
   if(titel == '' || goal == ''){return}
 
-  await fetch(`http://localhost:3000/daily-tracker/${userId}`, {
+  await fetch(`${API_URL}/daily-tracker/${userId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

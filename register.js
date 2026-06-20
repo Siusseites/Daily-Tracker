@@ -19,11 +19,13 @@ const loginTogglePassword = document.querySelector('.login-toggle-password')
 
 const registerTogglePassword = document.querySelector('.register-toggle-password')
 
+const API_URL = ' https://daily-tracker-exl8.onrender.com'
+
 loginBtn.addEventListener('click', async () => {
   const name = loginNameInput.value.trim()
   const password = loginPasswordInput.value.trim()
 
-  const res = await fetch('http://localhost:3000/login', {
+  const res = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -50,7 +52,7 @@ registerBtn.addEventListener('click', async () => {
   const name = registerNameInput.value.trim()
   const password = registerPasswordInput.value.trim()
 
-  const res = await fetch('http://localhost:3000/register', {
+  const res = await fetch(`${API_URL}/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
