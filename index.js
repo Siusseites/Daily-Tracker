@@ -74,7 +74,7 @@ app.get('/daily-tracker/:userId', async (req,res) => {
 //  const persönlicheZiele = ziele.filter((ziel) => {if(ziel.userId == userId){return ziel} })
 })
 
-app.post('/daily-tracker/:userId',  (req,res) => {
+app.post('/daily-tracker/:userId', async (req,res) => {
   const {titel} = req.body
   const {goal} = req.body
   const {date} = req.body
