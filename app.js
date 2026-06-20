@@ -118,6 +118,8 @@ addButton.addEventListener('click', async () => {
   })
 
   ladeZiele()
+  titelInput.value = ''
+  goalInput.value = ''
 })
 
 ladeZiele()
