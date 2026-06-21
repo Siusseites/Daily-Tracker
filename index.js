@@ -172,13 +172,28 @@ app.post('/login',async (req,res) => {
   } else{return res.status(401).json({ error: 'Wrong password' })}
 })
 
+app.post('/api/daily-reset', async (req, res) => {
+  try {
+    await saveToHistory()
+    
+    console.log("Mitternachts-Reset erfolgreich ausgeführt!");
+    res.status(200).json({ success: true, message: "Reset durchgeführt" });
+  } catch (error) {
+    console.error("Fehler beim Reset:", error);
+    res.status(500).json({ error: "Reset fehlgeschlagen" });
+  }
+});
+
 async function saveToHistory() {
   const result = await db.query('SELECT * FROM ziele')
   const ziele = result.rows
   const date = dayjs().format('YYYY-MM-DD')
   
   for(const ziel of ziele) {
-    await db.query('INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', [ziel.titel,ziel.goal,date,ziel.userId,ziel.achieved,ziel.done])
+
+    const uId = ziel.userid || ziel.userId
+
+    await db.query('INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', [ziel.titel,ziel.goal,date,uId,ziel.achieved,ziel.done])
   } 
   // ziele.forEach((ziel) => {
   //   const stmt = db.prepare('INSERT INTO history (titel, goal, date, userId, achieved, done) VALUES (?, ?, ?, ?, ?, ?) ')
@@ -194,11 +209,11 @@ app.listen(PORT, (req, res) => {
   console.log(`Server läuft auf http://localhost:${PORT}`)
 } )
 
-nodeCron.schedule('0 0 * * *', () => {
-  console.log('⏰ Cron-Job gestartet: Sichele Ziele und setze zurück...')
-  saveToHistory()
-  console.log('✅ Cron-Job erfolgreich beendet!');
-})
+// nodeCron.schedule('0 0 * * *', async () => {
+//   console.log('⏰ Cron-Job gestartet: Sichele Ziele und setze zurück...')
+//   await saveToHistory()
+//   console.log('✅ Cron-Job erfolgreich beendet!');
+// })
 
 
 
