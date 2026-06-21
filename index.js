@@ -172,7 +172,7 @@ app.post('/login',async (req,res) => {
   } else{return res.status(401).json({ error: 'Wrong password' })}
 })
 
-app.post('/api/daily-reset', async (req, res) => {
+app.post('/daily-reset', async (req, res) => {
   try {
     await saveToHistory()
     
