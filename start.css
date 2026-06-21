@@ -64,7 +64,8 @@ header p{
   border: 1px solid var(--border);
   padding: 20px;
   border-radius: 12px;
-  width: 60%;
+  width: 80%;
+  max-width: 800px;
 }
 
 .auth-form div{
