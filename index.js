@@ -172,37 +172,74 @@ app.post('/login',async (req,res) => {
   } else{return res.status(401).json({ error: 'Wrong password' })}
 })
 
-app.post('/daily-reset', async (req, res) => {
-  try {
-    await saveToHistory()
+// app.post('/daily-reset', async (req, res) => {
+//   try {
+//     await saveToHistory()
     
-    console.log("Mitternachts-Reset erfolgreich ausgeführt!");
-    res.status(200).json({ success: true, message: "Reset durchgeführt" });
-  } catch (error) {
-    console.error("Fehler beim Reset:", error);
-    res.status(500).json({ error: "Reset fehlgeschlagen" });
-  }
-});
+//     console.log("Mitternachts-Reset erfolgreich ausgeführt!");
+//     res.status(200).json({ success: true, message: "Reset durchgeführt" });
+//   } catch (error) {
+//     console.error("Fehler beim Reset:", error);
+//     res.status(500).json({ error: "Reset fehlgeschlagen" });
+//   }
+// });
 
-async function saveToHistory() {
-  const result = await db.query('SELECT * FROM ziele')
-  const ziele = result.rows
-  const date = dayjs().format('YYYY-MM-DD')
+// async function saveToHistory() {
+//   const result = await db.query('SELECT * FROM ziele')
+//   const ziele = result.rows
+//   const date = dayjs().format('YYYY-MM-DD')
   
-  for(const ziel of ziele) {
+//   for(const ziel of ziele) {
 
-    const uId = ziel.userid || ziel.userId
+//     const uId = ziel.userid || ziel.userId
 
-    await db.query('INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', [ziel.titel,ziel.goal,date,uId,ziel.achieved,ziel.done])
-  } 
+//     await db.query('INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', [ziel.titel,ziel.goal,date,uId,ziel.achieved,ziel.done])
+//   } 
   // ziele.forEach((ziel) => {
   //   const stmt = db.prepare('INSERT INTO history (titel, goal, date, userId, achieved, done) VALUES (?, ?, ?, ?, ?, ?) ')
 
   //   stmt.run(ziel.titel,ziel.goal,date,ziel.userId,ziel.achieved,ziel.done)
   // })
 
-  await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0,0,date])
+  // await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0,0,date])
   // resetStmt.run(0,0,date)
+// }
+
+app.post('/daily-reset', (req, res) => {
+  // 1. Dem Wecker SOFORT antworten (Status 200), damit cron-job.org nach 1 Sekunde fertig ist
+  res.status(200).json({ success: true, message: "Reset im Hintergrund gestartet" });
+
+  // 2. Danach den Reset im Hintergrund in aller Ruhe ausführen, während der Server aufwacht
+  (async () => {
+    try {
+      console.log("⏰ Hintergrund-Reset gestartet...");
+      await saveToHistory();
+      console.log("✅ Mitternachts-Reset erfolgreich im Hintergrund ausgeführt!");
+    } catch (error) {
+      console.error("❌ Fehler beim Hintergrund-Reset:", error);
+    }
+  })();
+});
+
+async function saveToHistory() {
+  const result = await db.query('SELECT * FROM ziele');
+  const ziele = result.rows;
+  const date = dayjs().format('YYYY-MM-DD');
+  
+  for (const ziel of ziele) {
+    // Falls Postgres die Spalte kleingeschrieben hat, fangen wir beides ab:
+    const uId = ziel.userid || ziel.userId;
+
+    // WICHTIG: Prüfe in deiner DB, ob die Spalte in der History-Tabelle "userId" oder userid heißt!
+    // Wenn sie kleingeschrieben ist, entferne die Anführungszeichen bei "userId"
+    await db.query(
+      'INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', 
+      [ziel.titel, ziel.goal, date, uId, ziel.achieved, ziel.done]
+    );
+  } 
+
+  // Setzt alle Ziele auf 0 zurück
+  await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0, 0, date]);
 }
 
 app.listen(PORT, (req, res) => {
