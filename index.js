@@ -54,12 +54,56 @@ const PORT = 3000
 app.use(express.json())
 app.use(cors())
 
-app.get('/daily-tracker/:userId', async (req,res) => {
-  const {userId} = req.params
- const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
- const persönlicheZiele = result.rows
- const today = dayjs().format('YYYY-MM-DD')
- res.json(persönlicheZiele)
+app.get('/daily-tracker/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const today = dayjs().format('YYYY-MM-DD');
+
+  try {
+    // 1. Ganz normal die Ziele aus der Datenbank holen
+    const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
+    const persönlicheZiele = result.rows;
+
+    // 2. Sicherheits-Check: Falls der Mitternachts-Cronjob versagt hat,
+    // holen wir den Reset JETZT nach, sobald die App das erste Mal geöffnet wird.
+    if (persönlicheZiele.length > 0 && persönlicheZiele[0].date !== today) {
+      console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv (Daten waren veraltet).`);
+      
+      // Reset im Hintergrund ausführen
+      (async () => {
+        try {
+          await saveToHistory();
+          console.log("✅ Sicherheits-Reset erfolgreich nachgeholt!");
+        } catch (err) {
+          console.error("❌ Fehler beim nachgeholten Reset:", err);
+        }
+      })();
+
+      // Wir schicken dem Frontend direkt genullte Werte zurück,
+      // damit die App sofort sauber aussieht und der User nichts merkt.
+      const zurückgesetzteZiele = persönlicheZiele.map(ziel => ({
+        ...ziel,
+        achieved: 0,
+        done: 0,
+        date: today
+      }));
+      return res.json(zurückgesetzteZiele);
+    }
+
+    // Wenn alles aktuell ist, ganz normal die echten Daten senden
+    res.json(persönlicheZiele);
+
+  } catch (error) {
+    console.error("Fehler beim Laden der Ziele:", error);
+    res.status(500).json({ error: "Fehler beim Laden der Ziele" });
+  }
+});
+
+// app.get('/daily-tracker/:userId', async (req,res) => {
+//   const {userId} = req.params
+//  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
+//  const persönlicheZiele = result.rows
+//  const today = dayjs().format('YYYY-MM-DD')
+//  res.json(persönlicheZiele)
  
 
 //  persönlicheZiele.forEach((ziel) => {
@@ -72,7 +116,7 @@ app.get('/daily-tracker/:userId', async (req,res) => {
 //  const aktuelleZiele = stmtnew.all()
 //  const aktuellePersönlicheZiele = aktuelleZiele.filter((ziel) => {if(ziel.userId == userId){return ziel} } )
 //  const persönlicheZiele = ziele.filter((ziel) => {if(ziel.userId == userId){return ziel} })
-})
+// })
 
 app.post('/daily-tracker/:userId', async (req,res) => {
   const {titel} = req.body
