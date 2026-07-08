@@ -63,7 +63,7 @@ app.get('/daily-tracker/:userId', async (req,res) => {
 //  const today = dayjs().format('YYYY-MM-DD')
  const today = dayjs().format('YYYY-MM-DD').add(1,'day')
 
-persönlicheZiele.forEach((ziel) => {
+persönlicheZiele.forEach(async (ziel) => {
   if(ziel.date != today){
     await saveToHistory()
   }
