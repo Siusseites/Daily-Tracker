@@ -60,11 +60,11 @@ app.get('/daily-tracker/:userId', async (req,res) => {
   const {userId} = req.params
  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
  const persönlicheZiele = result.rows
-//  const today = dayjs().format('YYYY-MM-DD')
- const today = dayjs().format('YYYY-MM-DD').add(1,'day')
+ const today = dayjs().format('YYYY-MM-DD')
+ const tommorow = today.add(1,'day')
 
 persönlicheZiele.forEach(async (ziel) => {
-  if(ziel.date != today){
+  if(ziel.date != tommorow){
     await saveToHistory()
   }
 })
