@@ -54,45 +54,14 @@ const PORT = 3000
 app.use(express.json())
 app.use(cors())
 
-app.get('/daily-tracker/:userId', async (req, res) => {
-  const { userId } = req.params;
-  const today = dayjs().format('YYYY-MM-DD');
 
-  try {
-    // 1. Ziele aus der DB holen
-    const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
-    const persönlicheZiele = result.rows;
 
-    // 2. Sicherheits-Check: Falls das Datum veraltet ist...
-    if (persönlicheZiele.length > 0 && persönlicheZiele[0].date !== today) {
-      console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv.`);
-      
-      // WICHTIG: Mit 'await' warten wir, bis die DB den Reset WIRKLICH fertiggeschrieben hat!
-      await saveToHistory();
-      console.log("✅ Sicherheits-Reset erfolgreich in DB gespeichert!");
-
-      // Jetzt holen wir uns die frisch in der DB aktualisierten Ziele (alle auf 0)
-      const aktualisiertResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
-      
-      // Und schicken die echten, neuen DB-Werte ans Frontend
-      return res.json(aktualisiertResult.rows);
-    }
-
-    // Wenn alles aktuell war, ganz normal senden
-    res.json(persönlicheZiele);
-
-  } catch (error) {
-    console.error("Fehler beim Laden der Ziele:", error);
-    res.status(500).json({ error: "Fehler beim Laden der Ziele" });
-  }
-});
-
-// app.get('/daily-tracker/:userId', async (req,res) => {
-//   const {userId} = req.params
-//  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
-//  const persönlicheZiele = result.rows
-//  const today = dayjs().format('YYYY-MM-DD')
-//  res.json(persönlicheZiele)
+app.get('/daily-tracker/:userId', async (req,res) => {
+  const {userId} = req.params
+ const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
+ const persönlicheZiele = result.rows
+ const today = dayjs().format('YYYY-MM-DD')
+ res.json(persönlicheZiele)
  
 
 //  persönlicheZiele.forEach((ziel) => {
@@ -105,7 +74,7 @@ app.get('/daily-tracker/:userId', async (req, res) => {
 //  const aktuelleZiele = stmtnew.all()
 //  const aktuellePersönlicheZiele = aktuelleZiele.filter((ziel) => {if(ziel.userId == userId){return ziel} } )
 //  const persönlicheZiele = ziele.filter((ziel) => {if(ziel.userId == userId){return ziel} })
-// })
+})
 
 app.post('/daily-tracker/:userId', async (req,res) => {
   const {titel} = req.body
