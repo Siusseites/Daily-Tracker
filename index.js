@@ -59,37 +59,26 @@ app.get('/daily-tracker/:userId', async (req, res) => {
   const today = dayjs().format('YYYY-MM-DD');
 
   try {
-    // 1. Ganz normal die Ziele aus der Datenbank holen
+    // 1. Ziele aus der DB holen
     const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
     const persönlicheZiele = result.rows;
 
-    // 2. Sicherheits-Check: Falls der Mitternachts-Cronjob versagt hat,
-    // holen wir den Reset JETZT nach, sobald die App das erste Mal geöffnet wird.
+    // 2. Sicherheits-Check: Falls das Datum veraltet ist...
     if (persönlicheZiele.length > 0 && persönlicheZiele[0].date !== today) {
-      console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv (Daten waren veraltet).`);
+      console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv.`);
       
-      // Reset im Hintergrund ausführen
-      (async () => {
-        try {
-          await saveToHistory();
-          console.log("✅ Sicherheits-Reset erfolgreich nachgeholt!");
-        } catch (err) {
-          console.error("❌ Fehler beim nachgeholten Reset:", err);
-        }
-      })();
+      // WICHTIG: Mit 'await' warten wir, bis die DB den Reset WIRKLICH fertiggeschrieben hat!
+      await saveToHistory();
+      console.log("✅ Sicherheits-Reset erfolgreich in DB gespeichert!");
 
-      // Wir schicken dem Frontend direkt genullte Werte zurück,
-      // damit die App sofort sauber aussieht und der User nichts merkt.
-      const zurückgesetzteZiele = persönlicheZiele.map(ziel => ({
-        ...ziel,
-        achieved: 0,
-        done: 0,
-        date: today
-      }));
-      return res.json(zurückgesetzteZiele);
+      // Jetzt holen wir uns die frisch in der DB aktualisierten Ziele (alle auf 0)
+      const aktualisiertResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
+      
+      // Und schicken die echten, neuen DB-Werte ans Frontend
+      return res.json(aktualisiertResult.rows);
     }
 
-    // Wenn alles aktuell ist, ganz normal die echten Daten senden
+    // Wenn alles aktuell war, ganz normal senden
     res.json(persönlicheZiele);
 
   } catch (error) {
