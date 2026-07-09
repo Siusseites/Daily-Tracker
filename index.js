@@ -69,9 +69,10 @@ app.get('/daily-tracker/:userId', async (req,res) => {
 //  const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
 
 for(const ziel of persönlicheZiele){
-  if(ziel.date !== today){
+  const zielDatum = dayjs(ziel.date).format('YYYY-MM-DD')
     console.log(today)
-    console.log(ziel.date)
+    console.log(zielDatum)
+  if(zielDatum !== today){
     console.log('Ziele in History werden bearbeitet')
     // await saveToHistory()
   }
