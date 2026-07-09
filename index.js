@@ -57,24 +57,41 @@ app.use(cors())
 
 
 app.get('/daily-tracker/:userId', async (req,res) => {
+  try{
+
+  
   const {userId} = req.params
+  const today = dayjs().format('YYYY-MM-DD')
+
  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
  const persönlicheZiele = result.rows
- const today = dayjs().format('YYYY-MM-DD')
+ 
 //  const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
 
-persönlicheZiele.forEach(async (ziel) => {
-  if(ziel.date != today){
-    // await saveToHistory()
-    console.log("Saved to history")
+for(const ziel of persönlicheZiele){
+  if(ziel.date !== today){
+    console.log(today)
+    console.log(ziel.date)
+    console.log('Ziele in History werden bearbeitet')
+    await saveToHistory()
   }
-})
+}
+
+// persönlicheZiele.forEach(async (ziel) => {
+//   if(ziel.date != today){
+//     // await saveToHistory()
+//     console.log("Saved to history")
+//   }
+// })
 
 const newResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
-const newPersönlicheZiele = result.rows
-console.log(newPersönlicheZiele)
+// const newPersönlicheZiele = result.rows
+// console.log(newPersönlicheZiele)
 
- res.json(newPersönlicheZiele)
+ res.json(newResult.rows)}catch(error){
+  console.error(error)
+  res.status(500).json({error: 'Server-Fehler'})
+ }
  
 
 //  persönlicheZiele.forEach((ziel) => {
