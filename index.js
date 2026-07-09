@@ -73,7 +73,7 @@ for(const ziel of persönlicheZiele){
     console.log(today)
     console.log(ziel.date)
     console.log('Ziele in History werden bearbeitet')
-    await saveToHistory()
+    // await saveToHistory()
   }
 }
 
