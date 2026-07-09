@@ -65,15 +65,13 @@ app.get('/daily-tracker/:userId', async (req,res) => {
 
 persönlicheZiele.forEach(async (ziel) => {
   if(ziel.date != today){
-    console.log("!!! GET ROUTE RESETTET GERADE EIN ZIEL !!!");
-    console.log(ziel.date)
-    console.log(today)
     await saveToHistory()
   }
 })
 
 const newResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
 const newPersönlicheZiele = result.rows
+console.log(newPersönlicheZiele)
 
  res.json(newPersönlicheZiele)
  
