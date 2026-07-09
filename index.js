@@ -64,8 +64,10 @@ app.get('/daily-tracker/:userId', async (req,res) => {
 //  const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
 
 persönlicheZiele.forEach(async (ziel) => {
-  console.log(ziel)
   if(ziel.date != today){
+    console.log("!!! GET ROUTE RESETTET GERADE EIN ZIEL !!!");
+    console.log(ziel.date)
+    console.log(today)
     await saveToHistory()
   }
 })
