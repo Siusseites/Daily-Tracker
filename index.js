@@ -57,42 +57,58 @@ app.use(cors())
 
 
 app.get('/daily-tracker/:userId', async (req,res) => {
-  try{
+const { userId } = req.params;
+  const today = dayjs().format('YYYY-MM-DD');
+
+  try {
+    const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
+    const persönlicheZiele = result.rows;
+
+    // Nur resetten, wenn der User Ziele hat und das Datum veraltet ist
+    if (persönlicheZiele.length > 0 && persönlicheZiele[0].date !== today) {
+      console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv.`);
+      
+      // WICHTIG: Wir übergeben die userId an die Funktion!
+      await saveToHistory(userId);
+      console.log("✅ Sicherheits-Reset erfolgreich ausgeführt!");
+
+      const aktualisiertResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
+      return res.json(aktualisiertResult.rows);
+    }
+
+    res.json(persönlicheZiele);
+  } catch (error) {
+    console.error("Fehler beim Laden der Ziele:", error);
+    res.status(500).json({ error: "Fehler beim Laden der Ziele" });
+  }
+
+//   try{
 
   
-  const {userId} = req.params
-  const today = dayjs().format('YYYY-MM-DD')
+//   const {userId} = req.params
+//   const today = dayjs().format('YYYY-MM-DD')
 
- const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
- const persönlicheZiele = result.rows
+//  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
+//  const persönlicheZiele = result.rows
  
- const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
+//  const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
 
-for(const ziel of persönlicheZiele){
-  const zielDatum = dayjs(ziel.date).format('YYYY-MM-DD')
-    // console.log(today)
-    // console.log(zielDatum)
-  if(zielDatum !== tommorow){
-    console.log('Ziele in History werden bearbeitet')
-    await saveToHistory()
-  }
-}
-
-// persönlicheZiele.forEach(async (ziel) => {
-//   if(ziel.date != today){
-//     // await saveToHistory()
-//     console.log("Saved to history")
+// for(const ziel of persönlicheZiele){
+//   const zielDatum = dayjs(ziel.date).format('YYYY-MM-DD')
+//     // console.log(today)
+//     // console.log(zielDatum)
+//   if(zielDatum !== tommorow){
+//     console.log('Ziele in History werden bearbeitet')
+//     await saveToHistory()
 //   }
-// })
+// }
 
-const newResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
-// const newPersönlicheZiele = result.rows
-// console.log(newPersönlicheZiele)
+// const newResult = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
 
- res.json(newResult.rows)}catch(error){
-  console.error(error)
-  res.status(500).json({error: 'Server-Fehler'})
- }
+//  res.json(newResult.rows)}catch(error){
+//   console.error(error)
+//   res.status(500).json({error: 'Server-Fehler'})
+//  }
  
 
 //  persönlicheZiele.forEach((ziel) => {
@@ -254,20 +270,39 @@ app.post('/daily-reset', (req, res) => {
   })();
 });
 
-async function saveToHistory() {
-  const result = await db.query('SELECT * FROM ziele');
+async function saveToHistory(userId) {
+  // const result = await db.query('SELECT * FROM ziele');
+  // const ziele = result.rows;
+  // const date = dayjs().format('YYYY-MM-DD');
+
+  // await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0, 0, date]);
+  
+  // for (const ziel of ziele) {
+  //   const uId = ziel.userid || ziel.userId;
+  //   await db.query(
+  //     'INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', 
+  //     [ziel.titel, ziel.goal, date, uId, ziel.achieved, ziel.done]
+  //   );
+  // } 
+
+  // 1. NUR die Ziele dieses spezifischen Users holen
+  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
   const ziele = result.rows;
   const date = dayjs().format('YYYY-MM-DD');
 
-  await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0, 0, date]);
-  
+  if (ziele.length === 0) return; // Falls keine Ziele da sind, abbrechen
+
+  // 2. SOFORT das Datum für DIESEN User auf heute setzen, damit parallele Requests blockiert werden
+  await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3 WHERE "userId" = $4', [0, 0, date, userId]);
+
+  // 3. Jetzt nur die alten Werte dieses Users in die History eintragen
   for (const ziel of ziele) {
     const uId = ziel.userid || ziel.userId;
     await db.query(
       'INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', 
       [ziel.titel, ziel.goal, date, uId, ziel.achieved, ziel.done]
     );
-  } 
+  }
 }
 
 app.listen(PORT, (req, res) => {
