@@ -63,9 +63,10 @@ const { userId } = req.params;
   try {
     const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
     const persönlicheZiele = result.rows;
+    const zielDatum = dayjs(persönlicheZiele[0].date).format('YYYY-MM-DD')
 
-    if (persönlicheZiele.length > 0 && persönlicheZiele[0].date !== today) {
-      console.log(persönlicheZiele[0].date)
+    if (persönlicheZiele.length > 0 && zielDatum !== today) {
+      console.log(zielDatum)
       console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv.`);
       
       await saveToHistory(userId);
