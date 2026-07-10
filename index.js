@@ -64,11 +64,10 @@ const { userId } = req.params;
     const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
     const persönlicheZiele = result.rows;
 
-    // Nur resetten, wenn der User Ziele hat und das Datum veraltet ist
     if (persönlicheZiele.length > 0 && persönlicheZiele[0].date !== today) {
+      console.log(persönlicheZiele[0].date)
       console.log(`⚠️ Sicherheits-Reset für User ${userId} aktiv.`);
       
-      // WICHTIG: Wir übergeben die userId an die Funktion!
       await saveToHistory(userId);
       console.log("✅ Sicherheits-Reset erfolgreich ausgeführt!");
 
@@ -285,17 +284,16 @@ async function saveToHistory(userId) {
   //   );
   // } 
 
-  // 1. NUR die Ziele dieses spezifischen Users holen
+
   const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId]);
   const ziele = result.rows;
   const date = dayjs().format('YYYY-MM-DD');
 
-  if (ziele.length === 0) return; // Falls keine Ziele da sind, abbrechen
+  if (ziele.length === 0) return; 
 
-  // 2. SOFORT das Datum für DIESEN User auf heute setzen, damit parallele Requests blockiert werden
   await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3 WHERE "userId" = $4', [0, 0, date, userId]);
 
-  // 3. Jetzt nur die alten Werte dieses Users in die History eintragen
+
   for (const ziel of ziele) {
     const uId = ziel.userid || ziel.userId;
     await db.query(
