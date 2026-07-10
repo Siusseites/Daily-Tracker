@@ -66,13 +66,13 @@ app.get('/daily-tracker/:userId', async (req,res) => {
  const result = await db.query('SELECT * FROM ziele WHERE "userId" = $1', [userId])
  const persönlicheZiele = result.rows
  
-//  const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
+ const tommorow = dayjs().add(1,'day').format('YYYY-MM-DD')
 
 for(const ziel of persönlicheZiele){
   const zielDatum = dayjs(ziel.date).format('YYYY-MM-DD')
     // console.log(today)
     // console.log(zielDatum)
-  if(zielDatum !== today){
+  if(zielDatum !== tommorow){
     console.log('Ziele in History werden bearbeitet')
     await saveToHistory()
   }
@@ -258,21 +258,16 @@ async function saveToHistory() {
   const result = await db.query('SELECT * FROM ziele');
   const ziele = result.rows;
   const date = dayjs().format('YYYY-MM-DD');
+
+  await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0, 0, date]);
   
   for (const ziel of ziele) {
-    // Falls Postgres die Spalte kleingeschrieben hat, fangen wir beides ab:
     const uId = ziel.userid || ziel.userId;
-
-    // WICHTIG: Prüfe in deiner DB, ob die Spalte in der History-Tabelle "userId" oder userid heißt!
-    // Wenn sie kleingeschrieben ist, entferne die Anführungszeichen bei "userId"
     await db.query(
       'INSERT INTO history (titel, goal, date, "userId", achieved, done) VALUES ($1, $2, $3, $4, $5, $6)', 
       [ziel.titel, ziel.goal, date, uId, ziel.achieved, ziel.done]
     );
   } 
-
-  // Setzt alle Ziele auf 0 zurück
-  await db.query('UPDATE ziele SET achieved = $1, done = $2, date = $3', [0, 0, date]);
 }
 
 app.listen(PORT, (req, res) => {
