@@ -33,6 +33,8 @@ body {
 /* Header */
 header {
   margin-bottom: 48px;
+  display: flex;
+  justify-content: space-between;
 }
  
 header h1 {
@@ -54,8 +56,93 @@ header p {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+.hamburger-btn{
+  position: fixed; 
+  top: 30px;     
+  right: 30px;    
+  z-index: 100; 
+  cursor: pointer;
+  width: 30px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger-btn:hover .line:nth-child(1) {
+  transform: translateY(2px);
+}
+
+.hamburger-btn:hover .line:nth-child(3) {
+  transform: translateY(-2px);
+}
+
+.hamburger-btn:hover .line {
+  background-color: var(--accent);
+}
+
+.line{
+  background-color: white;
+  height: 2px; 
+  width: 100%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
+  border-radius: 1px;
+}
+
+.hamburger-btn.is-active .line:nth-child(1) {
+  transform: translateY(11px) rotate(45deg);
+}
+
+
+.hamburger-btn.is-active .line:nth-child(2) {
+  opacity: 0;
+}
+
+
+.hamburger-btn.is-active .line:nth-child(3) {
+  transform: translateY(-11px) rotate(-45deg);
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  right: -300px; 
+  width: 300px;
+  height: 100vh;
+  background-color: #0b0b0b;
+  border-left: 1px solid #1a1a1a; 
+  padding: 80px 40px; 
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+  z-index: 10;
+}
+
+.menu-overlay.is-active {
+  transform: translateX(-300px);
+}
+
+.menu-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.menu-link {
+  color: #888888; 
+  font-family: 'Space Mono'; 
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+
+.menu-link:hover, .menu-link.active {
+  color:var(--accent); 
+}
  
-/* Add form */
+
 .add-form {
   display: flex;
   gap: 10px;

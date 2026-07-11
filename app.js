@@ -2,6 +2,8 @@ const liste = document.querySelector('ul')
 const addButton = document.querySelector('.js-add-btn')
 const titelInput = document.getElementById('titel')
 const goalInput = document.getElementById('goal')
+const hamburgerBtn = document.querySelector('.js-hamburger-btn')
+const menuOverlay = document.querySelector('.js-menu-overlay');
 
 const userId = localStorage.getItem('userId')
 const username = localStorage.getItem('username')
@@ -134,6 +136,11 @@ addButton.addEventListener('click', async () => {
   })
 
   ladeZiele()
+})
+
+hamburgerBtn.addEventListener('click', () => {
+  hamburgerBtn.classList.toggle('is-active')
+  menuOverlay.classList.toggle('is-active');
 })
 
 ladeZiele()

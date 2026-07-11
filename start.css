@@ -87,23 +87,43 @@ header p{
   color: whitesmoke;
 }
 
+.auth-form input {
+  border: 1px solid #222;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--accent); 
+}
+
 .auth-form input::placeholder{
   color: grey;
   font-family: 'Google Sans';
 }
 
-.auth-btn{
+.auth-btn {
+  background-color: #26ff44;
   color: white;
-  background:linear-gradient(var(--accent) 70%, var(--done));
-  border: none;
   padding: 10px;
   border-radius: 8px;
   font-family: 'Google Sans';
   cursor: pointer;
   margin-top: 30px;
   font-size: 0.9rem;
-  border: 1px solid rgb(46, 180, 50);
   font-weight: bold;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.auth-btn:hover{
+  transform: translateY(-1px); 
+  background-color: #1fd538;  
+  box-shadow: 0 0 15px rgba(38, 255, 68, 0.4);
+}
+
+.auth-btn:active {
+  transform: translateY(1px); 
 }
 
 .auth-switch{
@@ -114,10 +134,22 @@ header p{
   margin-top: 20px;
 }
 
-.switch-link{
+/* .switch-link{
   color: white;
   font-weight: bold;
   cursor: pointer;
+} */
+
+.switch-link {
+  color: #888;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.switch-link:hover {
+  color: #fff; /* Wird strahlend weiß */
+  text-decoration: underline; /* Oder dezentes Unterstreichen */
 }
 
 
