@@ -58,8 +58,9 @@ app.get('/history/:userId', async (req,res) => {
   const { userId } = req.params;
 
   const result = await db.query('SELECT * FROM history WHERE "userId" = $1', [userId])
+  const history = result.rows
 
-  res.json(result)
+  res.json(history)
 })
 
 app.get('/daily-tracker/:userId', async (req,res) => {
