@@ -102,6 +102,31 @@ header p{
   font-family: 'Google Sans';
 }
 
+.error {
+  
+  background-color: rgba(255, 75, 75, 0.1); 
+  border: 1px solid #ff4b4b;
+  color: #ff4b4b;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'Google Sans';
+}
+
+.register-error-box.hidden{
+  display: none;
+}
+
+.login-error-box.hidden{
+  display: none;
+}
+
+/* .auth-input.error{
+  border: 1px solid red;
+} */
+
 .auth-btn {
   background-color: #26ff44;
   color: white;
@@ -170,7 +195,7 @@ header p{
 
 .password-container button{
   position: absolute;
-  right: 10px;
+  right: 15px;
   align-self: center;
   border: none;
   background-color: transparent;
@@ -179,4 +204,12 @@ header p{
 .password-container img{
   width: 20px;
   cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .auth-form { 
+    width: 90%;  
+    max-width: none;
+    padding: 30px 20px;
+  }
 }

@@ -43,7 +43,11 @@ loginBtn.addEventListener('click', async () => {
     loginPasswordInput.value = ''
     window.location.href = 'tracker.html'
   } else{
-    loginError.innerHTML = daten.error
+    // if(daten.error == 'User not found'){
+    //   document.querySelector('.auth-input').classList.add('error')
+    // }
+    document.querySelector('.login-error-box').classList.remove('hidden')
+    document.querySelector('.login-error-box').innerHTML = daten.error
   }
   
 })
@@ -70,7 +74,8 @@ registerBtn.addEventListener('click', async () => {
     registerForm.classList.add('hidden')
     
   } else{
-    registerError.innerHTML = daten.error
+    document.querySelector('.register-error-box').classList.remove('hidden')
+    document.querySelector('.register-error-box').innerHTML = daten.error
   }
 })
 
