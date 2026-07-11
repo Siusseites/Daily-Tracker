@@ -135,6 +135,7 @@ header p {
   font-size: 1.2rem;
   text-decoration: none;
   transition: color 0.2s ease;
+  cursor: pointer;
 }
 
 

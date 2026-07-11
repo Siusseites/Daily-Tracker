@@ -54,7 +54,13 @@ const PORT = 3000
 app.use(express.json())
 app.use(cors())
 
+app.get('/history/:userId', async (req,res) => {
+  const { userId } = req.params;
 
+  const result = await db.query('SELECT * FROM history WHERE "userId" = $1', [userId])
+
+  res.json(result)
+})
 
 app.get('/daily-tracker/:userId', async (req,res) => {
 const { userId } = req.params;

@@ -8,6 +8,8 @@ const menuOverlay = document.querySelector('.js-menu-overlay');
 const userId = localStorage.getItem('userId')
 const username = localStorage.getItem('username')
 
+const history = document.getElementById('history')
+
 console.log(userId)
 console.log(username)
 
@@ -141,6 +143,12 @@ addButton.addEventListener('click', async () => {
 hamburgerBtn.addEventListener('click', () => {
   hamburgerBtn.classList.toggle('is-active')
   menuOverlay.classList.toggle('is-active');
+})
+
+history.addEventListener('click', async () => {
+  const antwort = await fetch(`${API_URL}/history/${userId}`)
+  const ziele = antwort.json()
+  console.log(ziele)
 })
 
 ladeZiele()
